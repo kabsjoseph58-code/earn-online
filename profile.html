@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Earn Online - Profile</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <button class="hamburger" id="hamburger-btn" onclick="document.querySelector('nav ul').classList.toggle('open')"><span></span><span></span><span></span></button>
+            <div class="logo"><img src="logo.png" alt="Earn Online Logo"></div>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="deposit.html">Deposit</a></li>
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="games.html">Games</a></li>
+                <li><a href="vip.html">VIP</a></li>
+                <li><a href="referral.html">Referral</a></li>
+                <li id="nav-register"><a href="register.html">Register</a></li>
+                <li id="nav-login"><a href="login.html">Log In</a></li><li><button id="logout-btn" onclick="handleLogout()" style="display:none;background:none;border:none;color:white;cursor:pointer;font-size:1rem;padding:0;">Log Out</button></li>
+                <li><a href="profile.html">Profile</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="about.html">About</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+
+    <div class="page-hero">
+        <div class="ph-slide active" style="background-image:url('homepics/make money.png')"></div>
+        <div class="ph-slide" style="background-image:url('homepics/money.png')"></div>
+        <div class="ph-slide" style="background-image:url('homepics/online earn.png')"></div>
+        <div class="ph-slide" style="background-image:url('homepics/wow money.png')"></div>
+        <div class="ph-overlay">
+            <div class="ph-title">Your Profile</div>
+            <div class="ph-subtitle">Manage your account and settings</div>
+        </div>
+    </div>
+    <script>(function(){var s=document.querySelectorAll(".page-hero .ph-slide"),i=0;setInterval(function(){s[i].classList.remove("active");i=(i+1)%s.length;s[i].classList.add("active");},4000);})();</script>
+        <section class="profile-section">
+            <h1>Your Profile</h1>
+            <div id="profile-card" class="profile-card">
+                <h2 id="profile-name">Guest</h2>
+                <p id="profile-email">No account information available.</p>
+                <div class="profile-info">
+                    <p><strong>Country:</strong> <span id="profile-country">-</span></p>
+                    <p><strong>Date Joined:</strong> <span id="profile-date">-</span></p>
+                    <p><strong>Referral Code:</strong> <span id="profile-referral">-</span></p>
+                    <p><strong>VIP Tier:</strong> <span id="profile-vip">None</span></p>
+                    <p><strong>Referral Deposits:</strong> <span id="profile-referrals">0</span></p>
+                </div>
+            </div>
+            <div id="profile-status" class="status-message" style="display:block; margin-top:20px; background-color:rgba(0,31,68,0.06); border:1px solid rgba(0,31,68,0.12); color:var(--brand-dark-blue);">If you have already registered, your data will appear here.</div>
+
+            <!-- Change Password -->
+            <div class="profile-section" style="margin-top:25px;">
+                <h2 style="color:var(--brand-dark-blue);margin-bottom:20px;font-size:1.1rem;border-bottom:2px solid var(--brand-green);padding-bottom:10px;">🔑 Change Password</h2>
+                <form id="change-password-form">
+                    <div class="form-group">
+                        <label for="cp-current">Current Password</label>
+                        <input type="password" id="cp-current" placeholder="Enter your current password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="cp-new">New Password</label>
+                        <input type="password" id="cp-new" placeholder="Enter new password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="cp-confirm">Confirm New Password</label>
+                        <input type="password" id="cp-confirm" placeholder="Confirm new password" required>
+                    </div>
+                    <button type="submit" class="btn-primary">🔒 Update Password</button>
+                </form>
+                <div id="cp-status" class="status-message"></div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Earn Online. All rights reserved.</p>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        document.getElementById('change-password-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const current = document.getElementById('cp-current').value;
+            const newPwd  = document.getElementById('cp-new').value;
+            const confirm = document.getElementById('cp-confirm').value;
+            const status  = document.getElementById('cp-status');
+
+            if (!userData.registeredUser) {
+                status.textContent = '❌ You must be logged in to change your password.';
+                status.className = 'status-message error'; status.style.display = 'block'; return;
+            }
+            if (current !== userData.registeredUser.password) {
+                status.textContent = '❌ Current password is incorrect.';
+                status.className = 'status-message error'; status.style.display = 'block'; return;
+            }
+            if (newPwd.length < 8) {
+                status.textContent = '❌ New password must be at least 8 characters.';
+                status.className = 'status-message error'; status.style.display = 'block'; return;
+            }
+            if (newPwd !== confirm) {
+                status.textContent = '❌ Passwords do not match.';
+                status.className = 'status-message error'; status.style.display = 'block'; return;
+            }
+            userData.registeredUser.password = newPwd;
+            saveData();
+            status.textContent = '✅ Password changed successfully!';
+            status.className = 'status-message success'; status.style.display = 'block';
+            document.getElementById('change-password-form').reset();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+{
+  "users": [
+    {
+      "id": 1785521325854,
+      "username": "admin",
+      "lastname": "tester",
+      "email": "qa_1785521324622@example.com",
+      "country": "Uganda",
+      "password": "Password123!",
+      "referral_code": "UTE-QAUSER-F0Y1",
+      "referral_link": "http://localhost:3000/register.html?ref=UTE-QAUSER-F0Y1",
+      "used_referral_code": null,
+      "registered_via_admin_link": true,
+      "vip_tier": "None",
+      "referral_joins": 0,
+      "referral_depositors": 0,
+      "referral_withdraw_allowance": 0,
+      "registered_at": "7/31/2026, 6:08:45 PM"
+    }
+  ],
+  "deposits": [],
+  "withdrawals": [],
+  "auditLog": [],
+  "dealerReferralCodes": []
+}

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Dealer Panel - Earn Online</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body { background: #f4f7fb; }
+        .editor-wrap { max-width: 1100px; margin: 0 auto; padding: 28px 20px 60px; }
+        .editor-header { display:flex; justify-content:space-between; align-items:center; gap:16px; margin-bottom:24px; }
+        .editor-header h1 { color: var(--brand-dark-blue-2); margin:0 0 4px; }
+        .editor-header p { color:#667085; margin:0; }
+        .back-link { color:var(--brand-dark-blue-2); font-weight:bold; text-decoration:none; }
+        .editor-grid { display:grid; grid-template-columns: 1fr 1.35fr; gap:22px; }
+        .editor-card { background:white; border-radius:14px; padding:24px; box-shadow:0 4px 18px rgba(0,31,68,.1); }
+        .editor-card h2 { color:var(--brand-dark-blue-2); font-size:1.05rem; margin:0 0 18px; padding-bottom:12px; border-bottom:2px solid #edf1f6; }
+        .field { margin-bottom:14px; }
+        .field label { display:block; color:#475467; font-weight:bold; font-size:.85rem; margin-bottom:6px; }
+        .field input, .field select { width:100%; padding:11px 12px; border:1px solid #d0d5dd; border-radius:8px; font:inherit; color:#1d2939; background:white; }
+        .field input:focus, .field select:focus { outline:2px solid rgba(40,167,69,.2); border-color:#28a745; }
+        .actions { display:flex; gap:10px; flex-wrap:wrap; margin-top:20px; }
+        .btn { border:0; border-radius:8px; padding:11px 16px; font-weight:bold; cursor:pointer; text-decoration:none; display:inline-block; }
+        .btn-save { background:linear-gradient(135deg,#28a745,#20c997); color:white; }
+        .btn-secondary { background:#e9eef5; color:var(--brand-dark-blue-2); }
+        .btn-danger { background:#fff0f0; color:#c62828; }
+        .notice { display:none; padding:11px 13px; border-radius:8px; margin-bottom:15px; font-size:.9rem; }
+        .notice.ok { display:block; color:#155724; background:#d4edda; border:1px solid #b7dfc1; }
+        .notice.err { display:block; color:#842029; background:#f8d7da; border:1px solid #f1bfc4; }
+        .transaction-list { max-height:520px; overflow:auto; }
+        .transaction { display:grid; grid-template-columns:1fr auto; gap:12px; align-items:center; padding:13px 0; border-bottom:1px solid #edf1f6; }
+        .transaction strong { color:var(--brand-dark-blue-2); display:block; }
+        .transaction small { color:#667085; }
+        .transaction .amount { color:#28a745; font-weight:bold; }
+        .transaction-actions { display:flex; gap:6px; }
+        .transaction-actions button { border:0; border-radius:6px; padding:6px 9px; cursor:pointer; }
+        .edit-tx { background:#e8f1ff; color:#0056b3; }
+        .delete-tx { background:#fff0f0; color:#c62828; }
+        .empty { color:#667085; text-align:center; padding:26px 0; }
+        @media (max-width:760px) { .editor-grid { grid-template-columns:1fr; } .editor-header { align-items:flex-start; flex-direction:column; } }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo"><img src="logo.png" alt="Earn Online Logo"></div>
+            <ul><li><a href="dealers.html">Dealer Panel</a></li><li><a href="dashboard.html">Dashboard</a></li></ul>
+        </nav>
+    </header>
+
+    <main class="editor-wrap">
+        <div class="editor-header">
+            <div><h1>✏️ Edit Dealer Panel</h1><p>Update your panel summary and transaction history.</p></div>
+            <a class="back-link" href="dealers.html">← Back to Dealer Panel</a>
+        </div>
+        <div id="notice" class="notice"></div>
+        <div class="editor-grid">
+            <section class="editor-card">
+                <h2>Panel Summary</h2>
+                <form id="summary-form">
+                    <div class="field"><label for="balance">Total Balance (UGX)</label><input id="balance" type="number" min="0" required></div>
+                    <div class="field"><label for="deposit-balance">Deposit Balance (UGX)</label><input id="deposit-balance" type="number" min="0" required></div>
+                    <div class="field"><label for="earnings">Total Earnings (UGX)</label><input id="earnings" type="number" min="0" required></div>
+                    <div class="field"><label for="deposits">Total Deposits</label><input id="deposits" type="number" min="0" required></div>
+                    <div class="field"><label for="vip-status">VIP Status</label><select id="vip-status"><option>None</option><option>VIP 1</option><option>VIP 2</option><option>VIP 3</option><option>VIP 4</option><option>VIP 5</option></select></div>
+                    <div class="actions"><button class="btn btn-save" type="submit">Save Summary</button><a class="btn btn-secondary" href="dealers.html">Cancel</a></div>
+                </form>
+            </section>
+
+            <section class="editor-card">
+                <h2>Transaction History</h2>
+                <form id="transaction-form">
+                    <input id="transaction-index" type="hidden" value="">
+                    <div class="field"><label for="transaction-date">Date</label><input id="transaction-date" type="text" placeholder="08/08/2026" required></div>
+                    <div class="field"><label for="transaction-type">Type</label><input id="transaction-type" type="text" placeholder="Deposit" required></div>
+                    <div class="field"><label for="transaction-amount">Amount (UGX)</label><input id="transaction-amount" type="number" min="0" required></div>
+                    <div class="field"><label for="transaction-status">Status</label><select id="transaction-status"><option>Completed</option><option>Pending</option><option>Processing</option><option>Failed</option></select></div>
+                    <div class="actions"><button class="btn btn-save" type="submit" id="transaction-submit">Add Transaction</button><button class="btn btn-secondary" type="button" id="transaction-cancel" hidden>Cancel Edit</button></div>
+                </form>
+                <div id="transaction-list" class="transaction-list"></div>
+            </section>
+        </div>
+    </main>
+
+    <script>
+        // Use the same account record as dealers.html/script.js. Older
+        // sessions may not have a userEmail marker, so recover it from the
+        // user's saved account instead of writing to the shared fallback key.
+        let userEmail = localStorage.getItem('userEmail');
+        let storageKey = userEmail ? `urbanTroveData_${userEmail}` : 'urbanTroveData';
+        if (!userEmail || !localStorage.getItem(storageKey)) {
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (!key || !key.startsWith('urbanTroveData_')) continue;
+                try {
+                    const candidate = JSON.parse(localStorage.getItem(key));
+                    if (candidate && candidate.registeredUser && candidate.registeredUser.email) {
+                        userEmail = candidate.registeredUser.email;
+                        storageKey = key;
+                        localStorage.setItem('userEmail', userEmail);
+                        break;
+                    }
+                } catch (e) {}
+            }
+        }
+        const defaults = { balance: 0, earnings: 0, depositTotal: 0, deposits: 0, vipTier: 'None', transactions: [] };
+        let data = { ...defaults, ...(JSON.parse(localStorage.getItem(storageKey) || '{}')) };
+        data.transactions = Array.isArray(data.transactions) ? data.transactions : [];
+
+        const $ = id => document.getElementById(id);
+        function showNotice(message, type = 'ok') { $('notice').textContent = message; $('notice').className = `notice ${type}`; setTimeout(() => $('notice').className = 'notice', 2500); }
+        function loadSummary() {
+            $('balance').value = data.balance || 0;
+            $('deposit-balance').value = data.depositTotal || 0;
+            $('earnings').value = data.earnings || 0;
+            $('deposits').value = data.deposits || 0;
+            $('vip-status').value = data.vipTier || 'None';
+        }
+        function save() { localStorage.setItem(storageKey, JSON.stringify(data)); }
+        function renderTransactions() {
+            const list = $('transaction-list');
+            if (!data.transactions.length) { list.innerHTML = '<div class="empty">No transactions yet.</div>'; return; }
+            list.innerHTML = data.transactions.map((tx, index) => `<div class="transaction"><div><strong>${escapeHtml(tx.type || 'Transaction')}</strong><small>${escapeHtml(tx.date || '')} · ${escapeHtml(tx.status || 'Pending')}</small><div class="amount">UGX ${Number(tx.amount || 0).toLocaleString()}</div></div><div class="transaction-actions"><button class="edit-tx" type="button" data-edit="${index}">Edit</button><button class="delete-tx" type="button" data-delete="${index}">Delete</button></div></div>`).join('');
+        }
+        function escapeHtml(value) { return String(value).replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char])); }
+        function resetTransactionForm() { $('transaction-form').reset(); $('transaction-index').value = ''; $('transaction-submit').textContent = 'Add Transaction'; $('transaction-cancel').hidden = true; }
+        $('summary-form').addEventListener('submit', event => { event.preventDefault(); data.balance = Number($('balance').value); data.depositTotal = Number($('deposit-balance').value); data.earnings = Number($('earnings').value); data.deposits = Number($('deposits').value); data.vipTier = $('vip-status').value; save(); showNotice('Panel summary saved successfully.'); });
+        $('transaction-form').addEventListener('submit', event => { event.preventDefault(); const tx = { date: $('transaction-date').value, type: $('transaction-type').value, amount: Number($('transaction-amount').value), status: $('transaction-status').value }; const index = $('transaction-index').value; if (index === '') data.transactions.unshift(tx); else data.transactions[Number(index)] = tx; save(); renderTransactions(); resetTransactionForm(); showNotice('Transaction history saved successfully.'); });
+        $('transaction-list').addEventListener('click', event => { const edit = event.target.dataset.edit; const remove = event.target.dataset.delete; if (edit !== undefined) { const tx = data.transactions[Number(edit)]; $('transaction-index').value = edit; $('transaction-date').value = tx.date || ''; $('transaction-type').value = tx.type || ''; $('transaction-amount').value = tx.amount || 0; $('transaction-status').value = tx.status || 'Pending'; $('transaction-submit').textContent = 'Save Transaction'; $('transaction-cancel').hidden = false; } if (remove !== undefined && confirm('Delete this transaction?')) { data.transactions.splice(Number(remove), 1); save(); renderTransactions(); showNotice('Transaction deleted.'); } });
+        $('transaction-cancel').addEventListener('click', resetTransactionForm);
+        loadSummary(); renderTransactions();
+    </script>
+</body>
+</html>

@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel — Earn Online</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            background: #0f0f23;
+            color: white;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        .bg-carousel {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+        }
+
+        .bg-slide {
+            position: absolute;
+            inset: 0;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 1.2s ease;
+        }
+
+        .bg-slide.active { opacity: 1; }
+
+        .bg-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 20, 0.78);
+        }
+
+        .admin-header, .admin-main {
+            position: relative;
+            z-index: 1;
+        }
+
+        .admin-header {
+            background: rgba(0,31,68,0.85);
+            backdrop-filter: blur(12px);
+            padding: 18px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #FFD700;
+        }
+
+        .admin-header h1 {
+            color: var(--brand-gold);
+            font-size: 1.5rem;
+            letter-spacing: 2px;
+        }
+
+        .admin-header span {
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+
+        .admin-logout-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .admin-logout-btn:hover {
+            background: #b02a37;
+        }
+
+        .admin-dealers-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+            margin-right: 12px;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .admin-dealers-btn:hover {
+            background: #20c997;
+        }
+
+        .admin-main {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .welcome-bar {
+            background: rgba(255,215,0,0.08);
+            backdrop-filter: blur(8px);
+            border: 1px solid #FFD700;
+            border-radius: 10px;
+            padding: 15px 25px;
+            margin-bottom: 35px;
+            color: #FFD700;
+            font-size: 1rem;
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .stat-box {
+            background: rgba(30, 58, 95, 0.55);
+            backdrop-filter: blur(10px);
+            border: 2px solid #28a745;
+            border-radius: 12px;
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        .stat-box.gold {
+            border-color: #FFD700;
+        }
+
+        .stat-box h3 {
+            color: #aaa;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .stat-box .big-number {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #28a745;
+        }
+
+        .stat-box.gold .big-number {
+            color: #FFD700;
+        }
+
+        .stat-box .sub-label {
+            color: #888;
+            font-size: 0.85rem;
+            margin-top: 6px;
+        }
+
+        .panel-section {
+            background: rgba(0,31,68,0.55);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0,31,68,0.48);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .panel-section h2 {
+            color: #FFD700;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #2d4a6b;
+            padding-bottom: 12px;
+        }
+
+        .user-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .user-table th {
+            background: var(--brand-dark-blue);
+            color: var(--brand-gold);
+            padding: 12px 15px;
+            text-align: left;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .user-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #2d4a6b;
+            color: #ddd;
+            font-size: 0.95rem;
+        }
+
+        .user-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .user-table tr:hover td {
+            background: rgba(255,215,0,0.04);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .badge.yes {
+            background: rgba(40,167,69,0.2);
+            color: #28a745;
+            border: 1px solid #28a745;
+        }
+
+        .badge.no {
+            background: rgba(220,53,69,0.2);
+            color: #dc3545;
+            border: 1px solid #dc3545;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #666;
+            padding: 30px;
+            font-size: 0.95rem;
+        }
+
+        .deposit-list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #2d4a6b;
+            font-size: 0.95rem;
+        }
+
+        .deposit-list-item:last-child {
+            border-bottom: none;
+        }
+
+        .deposit-amount {
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .deposit-date {
+            color: #888;
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 768px) {
+            .admin-header {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+
+            .stats-row {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-carousel">
+        <div class="bg-slide active" style="background-image:url('adminpics/Screenshot 2026-04-12 at 17-27-39 Google Search.png')"></div>
+        <div class="bg-slide" style="background-image:url('adminpics/Screenshot 2026-04-12 at 17-28-01 Google Search.png')"></div>
+        <div class="bg-slide" style="background-image:url('adminpics/Screenshot 2026-04-12 at 17-28-22 Google Search.png')"></div>
+        <div class="bg-slide" style="background-image:url('adminpics/Screenshot 2026-04-12 at 17-28-44 Google Search.png')"></div>
+        <div class="bg-slide" style="background-image:url('adminpics/Screenshot 2026-04-12 at 17-29-12 Google Search.png')"></div>
+        <div class="bg-overlay"></div>
+    </div>
+
+    <div class="admin-header">
+        <h1>🛡️ EARN ONLINE — ADMIN PANEL</h1>
+        <span id="admin-welcome-name">Welcome, Admin</span>
+        <div style="display: flex; gap: 10px;">
+            <a href="dealers.html?adminView=true" class="admin-dealers-btn">📊 Dealers Panel</a>
+            <button class="admin-logout-btn" onclick="adminLogout()">Logout</button>
+        </div>
+    </div>
+
+    <div class="admin-main">
+
+        <div class="welcome-bar" id="admin-welcome-bar">
+            Logged in as: <strong id="admin-display-name">—</strong> &nbsp;|&nbsp; Last refreshed: <span id="refresh-time">—</span>
+        </div>
+
+        <!-- Summary Stats (counts only) -->
+        <div class="stats-row">
+            <div class="stat-box">
+                <h3>Total Registered Users</h3>
+                <div class="big-number" id="stat-total-users">0</div>
+                <div class="sub-label">accounts created</div>
+            </div>
+            <div class="stat-box gold">
+                <h3>Total Deposits Made</h3>
+                <div class="big-number" id="stat-total-deposits">0</div>
+                <div class="sub-label">deposit transactions</div>
+            </div>
+            <div class="stat-box">
+                <h3>Total Referral Deposits</h3>
+                <div class="big-number" id="stat-referral-deposits">0</div>
+                <div class="sub-label">via referral code</div>
+            </div>
+            <div class="stat-box gold">
+                <h3>Active VIP Tier</h3>
+                <div class="big-number" id="stat-vip-tier" style="font-size:1.6rem;">None</div>
+                <div class="sub-label">current user tier</div>
+            </div>
+        </div>
+
+        <!-- Dealer Accounts List -->
+        <div class="panel-section">
+            <h2>💼 Dealer Accounts</h2>
+            <p style="color:#ccc;">Click a dealer to open their real Dealers Dashboard automatically.</p>
+            <div id="dealer-list-section">
+                <div class="empty-state">Loading dealer accounts...</div>
+            </div>
+        </div>
+
+        <!-- Investment Dashboard with Charts -->
+        <div class="panel-section" style="margin-bottom:30px;">
+            <h2>📊 Investment Dashboard</h2>
+
+            <!-- Chart Stats Row -->
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:15px;margin-bottom:25px;">
+                <div style="background:rgba(40,167,69,0.15);border:1px solid #28a745;border-radius:10px;padding:18px;text-align:center;">
+                    <div style="color:#aaa;font-size:0.78rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Total Invested</div>
+                    <div style="color:#28a745;font-size:1.8rem;font-weight:bold;" id="chart-total-invested">UGX 0</div>
+                </div>
+                <div style="background:rgba(255,215,0,0.15);border:1px solid #FFD700;border-radius:10px;padding:18px;text-align:center;">
+                    <div style="color:#aaa;font-size:0.78rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Total Withdrawals</div>
+                    <div style="color:#FFD700;font-size:1.8rem;font-weight:bold;" id="chart-total-withdrawn">UGX 0</div>
+                </div>
+                <div style="background:rgba(220,53,69,0.15);border:1px solid #dc3545;border-radius:10px;padding:18px;text-align:center;">
+                    <div style="color:#aaa;font-size:0.78rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Net Balance</div>
+                    <div style="color:#ff6b6b;font-size:1.8rem;font-weight:bold;" id="chart-net-balance">UGX 0</div>
+                </div>
+                <div style="background:rgba(32,201,151,0.08);border:1px solid var(--brand-green-2);border-radius:10px;padding:18px;text-align:center;">
+                    <div style="color:#aaa;font-size:0.78rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Active Investors</div>
+                    <div style="color:var(--brand-green-2);font-size:1.8rem;font-weight:bold;" id="chart-active-investors">0</div>
+                </div>
+            </div>
+
+            <!-- Charts Grid -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px;">
+                <!-- Line Chart - Investment Over Time -->
+                <div style="background:rgba(0,0,0,0.3);border:1px solid rgba(255,215,0,0.2);border-radius:10px;padding:20px;">
+                    <div style="color:#FFD700;font-size:0.85rem;font-weight:bold;margin-bottom:15px;text-transform:uppercase;letter-spacing:1px;">📈 Investments Over Time</div>
+                    <canvas id="investmentLineChart" height="200"></canvas>
+                </div>
+
+                <!-- Bar Chart - Deposits vs Withdrawals -->
+                <div style="background:rgba(0,0,0,0.3);border:1px solid rgba(255,215,0,0.2);border-radius:10px;padding:20px;">
+                    <div style="color:#FFD700;font-size:0.85rem;font-weight:bold;margin-bottom:15px;text-transform:uppercase;letter-spacing:1px;">📊 Deposits vs Withdrawals</div>
+                    <canvas id="depositBarChart" height="200"></canvas>
+                </div>
+            </div>
+
+            <!-- Doughnut Chart - Investment Plans -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+                <div style="background:rgba(0,0,0,0.3);border:1px solid rgba(255,215,0,0.2);border-radius:10px;padding:20px;">
+                    <div style="color:#FFD700;font-size:0.85rem;font-weight:bold;margin-bottom:15px;text-transform:uppercase;letter-spacing:1px;">🎯 Investment Plans Breakdown</div>
+                    <canvas id="plansDoughnutChart" height="200"></canvas>
+                </div>
+
+                <!-- Recent Deposits Table -->
+                <div style="background:rgba(0,0,0,0.3);border:1px solid rgba(255,215,0,0.2);border-radius:10px;padding:20px;">
+                    <div style="color:#FFD700;font-size:0.85rem;font-weight:bold;margin-bottom:15px;text-transform:uppercase;letter-spacing:1px;">📝 Recent Deposits</div>
+                    <div id="recent-deposits-list" style="font-size:0.85rem;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel-section">
+            <p style="color:#aaa;font-size:0.9rem;">Detailed user information, full transaction history, system secrets and owner tools are restricted to the Owners Page.</p>
+        </div>
+
+        <!-- Manual Payment Verification Section -->
+        <div class="panel-section">
+            <h2>💳 Manual Payment Verification</h2>
+            <p style="color:#ccc;">Review and approve manual deposits and withdrawal requests from users.</p>
+
+            <!-- Tabs for Deposits/Withdrawals -->
+            <div style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #FFD700; padding-bottom: 10px;">
+                <button id="tab-deposits" class="admin-tab-btn" style="background: #FFD700; color: #0f0f23; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; transition: all 0.3s;">
+                    📥 Pending Deposits
+                </button>
+                <button id="tab-withdrawals" class="admin-tab-btn" style="background: transparent; color: #FFD700; padding: 10px 20px; border: 2px solid #FFD700; border-radius: 6px; cursor: pointer; font-weight: bold; transition: all 0.3s;">
+                    📤 Pending Withdrawals
+                </button>
+            </div>
+
+            <!-- Pending Deposits Tab -->
+            <div id="deposits-content" style="display: block;">
+                <div id="pending-deposits-list" style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,215,0,0.2); border-radius: 10px; padding: 20px;">
+                    <p style="color: #aaa; text-align: center;">No pending deposits to review.</p>
+                </div>
+            </div>
+
+            <!-- Pending Withdrawals Tab -->
+            <div id="withdrawals-content" style="display: none;">
+                <div id="pending-withdrawals-list" style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,215,0,0.2); border-radius: 10px; padding: 20px;">
+                    <p style="color: #aaa; text-align: center;">No pending withdrawals to process.</p>
+                </div>
+            </div>
+
+            <!-- Payment Details Modal -->
+            <div id="payment-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 1000; padding: 20px; overflow-y: auto;">
+                <div style="background: #1a1a2e; border: 2px solid #FFD700; border-radius: 10px; max-width: 600px; margin: auto; padding: 25px; color: white;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h3 id="modal-title" style="margin: 0; color: #FFD700;">Payment Details</h3>
+                        <button onclick="closePaymentModal()" style="background: none; border: none; color: #FFD700; font-size: 1.5rem; cursor: pointer;">✕</button>
+                    </div>
+
+                    <div id="modal-content" style="margin-bottom: 20px;"></div>
+
+                    <!-- Screenshot Preview -->
+                    <div id="screenshot-section" style="margin-bottom: 20px; display: none;">
+                        <p style="color: #FFD700; font-weight: bold; margin-bottom: 10px;">Payment Proof:</p>
+                        <img id="modal-screenshot" style="max-width: 100%; max-height: 400px; border-radius: 6px; border: 1px solid #FFD700;">
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <button id="approve-btn" onclick="approvePayment()" style="background: #28a745; border: none; color: white; padding: 12px; border-radius: 6px; cursor: pointer; font-weight: bold;">
+                            ✅ Approve
+                        </button>
+                        <button id="reject-btn" onclick="rejectPayment()" style="background: #dc3545; border: none; color: white; padding: 12px; border-radius: 6px; cursor: pointer; font-weight: bold;">
+                            ❌ Reject
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Referral Link Generator -->
+        <div class="panel-section">
+            <h2>🔗 Admin Referral Link</h2>
+            <p style="color:#ccc;">Generate a single-use admin referral link. Whoever registers using this link will get an elevated dashboard with edit controls.</p>
+            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+                <input id="admin-ref-input" readonly style="flex:1;padding:10px;border-radius:6px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.03);color:#fff;font-weight:bold;" placeholder="No admin link generated yet">
+                <button id="generate-admin-link" style="background:linear-gradient(135deg,var(--brand-green),#20c997);border:none;color:white;padding:10px 16px;border-radius:6px;cursor:pointer;font-weight:bold;">Generate Link</button>
+                <button id="revoke-admin-link" style="background:linear-gradient(135deg,var(--brand-dark-blue),#002a5c);border:none;color:white;padding:10px 16px;border-radius:6px;cursor:pointer;font-weight:bold;">Revoke</button>
+            </div>
+            <p id="admin-link-note" style="color:#999;margin-top:8px;font-size:0.9rem;">Sharing this link allows one registration to receive admin-linked privileges. Use carefully.</p>
+        </div>
+
+        <!-- Dealer Referral Link Generator -->
+        <div class="panel-section">
+            <h2>💼 Dealer Referral Link Generator</h2>
+            <p style="color:#ccc;">Generate dealer referral codes. Users who register with a dealer code become dealers and can access the Dealers Dashboard to manually edit/create deposits and withdrawals for their referrals. Regular referral codes do not have this privilege.</p>
+            <div style="margin-bottom:20px;">
+                <button id="generate-dealer-link" style="background:linear-gradient(135deg,#FFD700,#ffed4e);border:none;color:#0f0f23;padding:12px 25px;border-radius:6px;cursor:pointer;font-weight:bold;font-size:1rem;">+ Generate Dealer Code</button>
+            </div>
+            <div id="dealer-codes-list" style="background:rgba(0,0,0,0.3);border:1px solid rgba(255,215,0,0.2);border-radius:10px;padding:15px;min-height:80px;">
+                <div style="color:#aaa;text-align:center;">No dealer codes generated yet. Click the button above to create one.</div>
+            </div>
+            <p style="color:#999;margin-top:12px;font-size:0.9rem;">💡 <strong>How it works:</strong> Generate a dealer code → Share the link with your dealer → When they register using that link, they become a dealer → They can access <strong>dealers.html</strong> to manage deposits/withdrawals for their referrals without using APIs.</p>
+            <p style="color:#999;font-size:0.9rem;margin-top:8px;">🔐 <strong>Security:</strong> Dealers can only edit/create records for users who registered with their referral code. Full audit logging is enabled.</p>
+        </div>
+
+        <!-- Change Admin Password -->
+        <div class="panel-section">
+            <h2>🔑 Change Your Admin Password</h2>
+            <form id="admin-change-pwd-form" style="max-width:420px;">
+                <div style="margin-bottom:15px;">
+                    <label style="color:#aaa;font-size:0.88rem;display:block;margin-bottom:6px;">Current Password</label>
+                    <input type="password" id="acp-current" placeholder="Enter current password" style="width:100%;padding:10px;background:rgba(0,0,0,0.3);border:1px solid #FFD700;color:white;border-radius:6px;font-size:0.95rem;">
+                </div>
+                <div style="margin-bottom:15px;">
+                    <label style="color:#aaa;font-size:0.88rem;display:block;margin-bottom:6px;">New Password</label>
+                    <input type="password" id="acp-new" placeholder="Enter new password" style="width:100%;padding:10px;background:rgba(0,0,0,0.3);border:1px solid #FFD700;color:white;border-radius:6px;font-size:0.95rem;">
+                </div>
+                <div style="margin-bottom:15px;">
+                    <label style="color:#aaa;font-size:0.88rem;display:block;margin-bottom:6px;">Confirm New Password</label>
+                    <input type="password" id="acp-confirm" placeholder="Confirm new password" style="width:100%;padding:10px;background:rgba(0,0,0,0.3);border:1px solid #FFD700;color:white;border-radius:6px;font-size:0.95rem;">
+                </div>
+                <button type="submit" style="background:linear-gradient(135deg,var(--brand-gold),#ffed4e);color:var(--brand-dark-blue);border:none;padding:11px 25px;border-radius:7px;font-weight:bold;cursor:pointer;font-size:0.95rem;">🔒 Update Password</button>
+            </form>
+            <div id="acp-status" style="margin-top:12px;padding:10px;border-radius:6px;display:none;font-size:0.9rem;"></div>
+        </div>
+
+    </div>
+
+    <!-- Owners access removed -->
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="admin.js"></script>
+    <script src="admin-payments.js"></script>
+    <script>
+        const bgSlides = document.querySelectorAll('.bg-slide');
+        let bgCurrent = 0;
+        setInterval(() => {
+            bgSlides[bgCurrent].classList.remove('active');
+            bgCurrent = (bgCurrent + 1) % bgSlides.length;
+            bgSlides[bgCurrent].classList.add('active');
+        }, 4000);
+    </script>
+</body>
+</html>

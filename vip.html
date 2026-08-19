@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Earn Online - VIP</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <button class="hamburger" id="hamburger-btn" onclick="document.querySelector('nav ul').classList.toggle('open')"><span></span><span></span><span></span></button>
+            <div class="logo"><img src="logo.png" alt="Earn Online Logo"></div>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="deposit.html">Deposit</a></li>
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="vip.html">VIP</a></li>
+                <li><a href="referral.html">Referral</a></li>
+                <li id="nav-register"><a href="register.html">Register</a></li>
+                <li id="nav-login"><a href="login.html">Log In</a></li><li><button id="logout-btn" onclick="handleLogout()" style="display:none;background:none;border:none;color:white;cursor:pointer;font-size:1rem;padding:0;">Log Out</button></li>
+                <li><a href="profile.html">Profile</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="apply.html" style="color:#28a745;font-weight:bold;">Apply Online</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+
+    <div class="page-hero">
+        <div class="ph-slide active" style="background-image:url('homepics/make money.png')"></div>
+        <div class="ph-slide" style="background-image:url('homepics/money.png')"></div>
+        <div class="ph-slide" style="background-image:url('homepics/online earn.png')"></div>
+        <div class="ph-slide" style="background-image:url('homepics/wow money.png')"></div>
+        <div class="ph-overlay">
+            <div class="ph-title">VIP Program</div>
+            <div class="ph-subtitle">Invite friends and climb the VIP tiers</div>
+        </div>
+    </div>
+    <script>(function(){var s=document.querySelectorAll(".page-hero .ph-slide"),i=0;setInterval(function(){s[i].classList.remove("active");i=(i+1)%s.length;s[i].classList.add("active");},4000);})();</script>
+        <section class="vip-section">
+            <h1>Become a VIP</h1>
+            <p>Invite members and earn a bonus percentage on your returns. The more members you invite and have them deposit, the higher your VIP tier.</p>
+
+            <div class="form-note" id="vip-code-note">
+                Your referral code is <strong id="display-referral-code">—</strong>. Share it with friends so their deposit activates your VIP progress.
+            </div>
+
+            <div class="vip-grid">
+                <div class="vip-card">
+                    <h3>VIP 1</h3>
+                    <p>Invite 5 members who deposit</p>
+                    <p><strong>Bonus:</strong> 2%</p>
+                </div>
+                <div class="vip-card">
+                    <h3>VIP 2</h3>
+                    <p>Invite 10 members who deposit</p>
+                    <p><strong>Bonus:</strong> 4%</p>
+                </div>
+                <div class="vip-card">
+                    <h3>VIP 3</h3>
+                    <p>Invite 15 members who deposit</p>
+                    <p><strong>Bonus:</strong> 6%</p>
+                </div>
+                <div class="vip-card">
+                    <h3>VIP 4</h3>
+                    <p>Invite 20 members who deposit</p>
+                    <p><strong>Bonus:</strong> 8%</p>
+                </div>
+                <div class="vip-card">
+                    <h3>VIP 5</h3>
+                    <p>Invite 25 members who deposit</p>
+                    <p><strong>Bonus:</strong> 10%</p>
+                </div>
+            </div>
+
+            <div class="form-note" id="vip-summary-note">
+                You have <strong id="referral-deposits">0</strong> referral deposits and your current tier is <strong id="current-vip-tier">None</strong>.
+            </div>
+
+            <form id="vip-form">
+                <div class="form-group">
+                    <label for="invite-count">Number of invited members (manual):</label>
+                    <input type="number" id="invite-count" min="0" placeholder="Enter invited members count" required>
+                </div>
+                <button type="submit" class="btn-primary">Update VIP Status</button>
+            </form>
+
+            <div id="vip-result" class="status-message success" style="display: block; background-color: rgba(0,31,68,0.06); color: var(--brand-dark-blue); border: 1px solid rgba(0,31,68,0.12); margin-top: 20px;">Enter your invite count or use the referral page to update your VIP tier.</div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Earn Online. All rights reserved.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
